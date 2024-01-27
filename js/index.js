@@ -135,7 +135,7 @@ function validarFormularioTres(){
     if(habilidadesvalido && pontosFortesvalido){
         $containerBtnFormThree.removeClass('disabled')
         $btnFormThree.removeClass('disabled')
-        $btnFormThree.off('click').on('click', finilazinarFormulario)
+        $btnFormThree.off('click').on('click', salvarNoTrello)
 
     }else{
         $containerBtnFormThree.addClass('disabled')
@@ -201,7 +201,51 @@ function init() {
 async function salvarNoTrello(){
     try {
         const nome = $inputNome.val();
-        const sobrenome = $inputSobrenome.val()
+        const sobrenome = $inputSobrenome.val();
+        const email = $inputEmail.val();
+        const dataNascimento = $inputDataDeNascimento.val();
+        const minibio = $inputMinibio.val();
+        const endereco = $inputEndereco.val();
+        const complemento = $inputComplemento.val();
+        const cidade = $inputCidade.val();
+        const cep = $inputCep.val();
+        const habilidades = $inputHabilidades.val();
+        const pontosFortes = $inputPontosForte.val();
+
+        if(!nome || !sobrenome || !email || !dataNascimento || !endereco || !cidade || !cep || !habilidades || !pontosFortes) {
+            return alert('Favor prencher todos os dados ')
+        }
+
+        const body = {
+            name: "Candidato - " + nome  + " " + sobrenome,
+            desc: `
+                Seguem dados do candidato(a):
+                --------------Dados Pessoaias----------------
+                Nome: ${nome}
+                SobreNome: ${sobrenome}
+                Email: ${email}
+                Data de Nascimento: ${dataNascimento}
+                MiniBio: ${minibio}
+                --------------Dados de endereço----------------
+                Endereço: ${endereco}
+                Complemento: ${complemento}
+                Cidade: ${cidade}
+                Cep: ${cep}
+
+                --------------Dados do Candidato(a)----------------
+                HAbilidades: ${habilidades}
+                Pontos Fortes: ${pontosFortes}
+            `
+        }
+
+        await fetch('https://api.trello.com/1/cards?idList=65b1dd426c422f8d6ee46d09&key=40a791789a1d0e06df72d452f6c575ba&token=ATTAf6a4ff742c7bf71b62aa3f9a411f09de106d0979977f4ed9b4cab79fd74a752bE99E7421',{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify(body)
+        })
+        return finilazinarFormulario()
     }catch(e){
         console.log("Ocorreu um erro ao salvatr no trello:",e)
     }
